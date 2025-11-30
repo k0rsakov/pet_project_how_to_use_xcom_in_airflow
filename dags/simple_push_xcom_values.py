@@ -1,5 +1,3 @@
-import logging
-
 import pendulum
 
 from airflow import DAG
@@ -28,12 +26,12 @@ args = {
 }
 
 
-def simple_push_xcom(**context) -> None:
+def simple_push_xcom(**context) -> pendulum.DateTime:
     """
-    Печатает контекст DAG.
+    Возвращает дату из контекста DAG.
 
     @param context: Контекст DAG.
-    @return: Ничего не возвращает.
+    @return: data_interval_start:pendulum.DateTime.
     """
 
     return context.get('data_interval_start')
@@ -43,7 +41,7 @@ with DAG(
     dag_id=DAG_ID,
     schedule_interval="0 10 * * *",
     default_args=args,
-    tags=["context"],
+    tags=["xcom"],
     description=SHORT_DESCRIPTION,
     concurrency=1,
     max_active_tasks=1,
