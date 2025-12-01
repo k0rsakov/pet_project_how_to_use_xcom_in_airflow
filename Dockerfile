@@ -15,5 +15,3 @@ USER airflow
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir \
     apache-airflow==2.10.4 \
-    duckdb==1.4.0 \
-    Faker==38.0.0 \
