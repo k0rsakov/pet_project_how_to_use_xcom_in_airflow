@@ -1,11 +1,9 @@
 import logging
 
 import pendulum
-
 from airflow import DAG
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
-
 
 # Конфигурация DAG
 OWNER = "i.korsakov"
@@ -46,11 +44,10 @@ def simple_task(**context) -> None:
 
 with DAG(
     dag_id=DAG_ID,
-    schedule_interval="0 10 * * *",
+    schedule="0 10 * * *",
     default_args=args,
     tags=["context"],
     description=SHORT_DESCRIPTION,
-    concurrency=1,
     max_active_tasks=1,
     max_active_runs=1,
 ) as dag:
