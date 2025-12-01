@@ -38,7 +38,7 @@ def get_common_date(**context) -> pendulum.DateTime:
     return context.get("data_interval_start").format("YYYYMMDDHHmmss")
 
 
-def simple_push_xcom(**context) -> None:
+def cat_fact_push_xcom(**context) -> None:
     """
     Возвращает дату из контекста DAG.
 
@@ -54,7 +54,7 @@ def simple_push_xcom(**context) -> None:
     logging.info(f"⬆️ Pushed cat fact success.")
 
 
-def simple_pull_xcom(**context) -> None:
+def cat_fact_pull_xcom(**context) -> None:
     """
     Извлекает дату из XCom и логирует её.
 
@@ -64,7 +64,7 @@ def simple_pull_xcom(**context) -> None:
 
     date_context = context.get("task_instance").xcom_pull("get_common_date")
 
-    date = context.get("task_instance").xcom_pull(task_ids="simple_push_xcom", key=f"cat_fact_{date_context}")
+    date = context.get("task_instance").xcom_pull(key=f"cat_fact_{date_context}")
 
     logging.info(f"️⬇️ Pulled cat fact: {date}")
 
@@ -90,18 +90,18 @@ with DAG(
         python_callable=get_common_date,
     )
 
-    simple_push_xcom = PythonOperator(
-        task_id="simple_push_xcom",
-        python_callable=simple_push_xcom,
+    cat_fact_push_xcom = PythonOperator(
+        task_id="cat_fact_push_xcom",
+        python_callable=cat_fact_push_xcom,
     )
 
-    simple_pull_xcom = PythonOperator(
-        task_id="simple_pull_xcom",
-        python_callable=simple_pull_xcom,
+    cat_fact_pull_xcom = PythonOperator(
+        task_id="cat_fact_pull_xcom",
+        python_callable=cat_fact_pull_xcom,
     )
 
     end = EmptyOperator(
         task_id="end",
     )
 
-    start >> get_common_date >> simple_push_xcom >> simple_pull_xcom >> end
+    start >> get_common_date >> cat_fact_push_xcom >> cat_fact_pull_xcom >> end
