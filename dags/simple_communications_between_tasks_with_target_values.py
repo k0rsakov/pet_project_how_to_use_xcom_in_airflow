@@ -1,6 +1,7 @@
 import logging
-import requests
+
 import pendulum
+import requests
 
 from airflow import DAG
 from airflow.operators.empty import EmptyOperator
@@ -51,7 +52,7 @@ def cat_fact_push_xcom(**context) -> None:
     response = requests.get(url="https://catfact.ninja/fact", timeout=10)
 
     context.get("task_instance").xcom_push(key=f"cat_fact_{date_context}", value=response.json())
-    logging.info(f"⬆️ Pushed cat fact success.")
+    logging.info("⬆️ Pushed cat fact success.")
 
 
 def cat_fact_pull_xcom(**context) -> None:

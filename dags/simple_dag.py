@@ -1,9 +1,11 @@
 import logging
 
 import pendulum
+
 from airflow import DAG
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
+
 
 # Конфигурация DAG
 OWNER = "i.korsakov"
