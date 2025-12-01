@@ -39,11 +39,10 @@ def simple_push_xcom(**context) -> pendulum.DateTime:
 
 with DAG(
     dag_id=DAG_ID,
-    schedule_interval="0 10 * * *",
+    schedule="0 10 * * *",
     default_args=args,
     tags=["xcom"],
     description=SHORT_DESCRIPTION,
-    concurrency=1,
     max_active_tasks=1,
     max_active_runs=1,
 ) as dag:
