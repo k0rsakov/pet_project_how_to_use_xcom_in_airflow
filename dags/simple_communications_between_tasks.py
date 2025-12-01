@@ -39,6 +39,7 @@ def simple_push_xcom(**context) -> None:
     context.get("task_instance").xcom_push(
         key="dis_simple_communications_between_tasks", value=context.get("data_interval_start")
     )
+    logging.info(f"⬆️ Pushed XCom date: {context.get('data_interval_start')}")
 
 
 def simple_pull_xcom(**context) -> None:
@@ -53,7 +54,7 @@ def simple_pull_xcom(**context) -> None:
         task_ids="simple_push_xcom", key="dis_simple_communications_between_tasks"
     )
 
-    logging.info(f"Pulled XCom date: {date}")
+    logging.info(f"️⬇️ Pulled XCom date: {date}")
 
 
 with DAG(
