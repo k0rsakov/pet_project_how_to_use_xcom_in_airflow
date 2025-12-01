@@ -34,7 +34,7 @@ def simple_push_xcom(**context) -> pendulum.DateTime:
     @return: data_interval_start:pendulum.DateTime.
     """
 
-    return context.get('data_interval_start')
+    return context.get("data_interval_start")
 
 
 with DAG(

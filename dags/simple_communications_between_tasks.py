@@ -36,18 +36,21 @@ def simple_push_xcom(**context) -> None:
     @return: data_interval_start:pendulum.DateTime.
     """
 
-    context.get('task_instance').xcom_push(
-        key='dis_simple_communications_between_tasks',
-        value=context.get('data_interval_start')
+    context.get("task_instance").xcom_push(
+        key="dis_simple_communications_between_tasks", value=context.get("data_interval_start")
     )
 
 
 def simple_pull_xcom(**context) -> None:
-    """"""
+    """
+    Извлекает дату из XCom и логирует её.
 
-    date = context.get('task_instance').xcom_pull(
-        task_ids="simple_push_xcom",
-        key="dis_simple_communications_between_tasks"
+    :param context: Контекст DAG.
+    :return: Ничего не возвращает.
+    """
+
+    date = context.get("task_instance").xcom_pull(
+        task_ids="simple_push_xcom", key="dis_simple_communications_between_tasks"
     )
 
     logging.info(f"Pulled XCom date: {date}")
