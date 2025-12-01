@@ -52,6 +52,7 @@ def cat_fact_push_xcom(**context) -> None:
     response = requests.get(url="https://catfact.ninja/fact", timeout=10)
 
     context.get("task_instance").xcom_push(key=f"cat_fact_{date_context}", value=response.json())
+
     logging.info("⬆️ Pushed cat fact success.")
 
 
@@ -65,9 +66,9 @@ def cat_fact_pull_xcom(**context) -> None:
 
     date_context = context.get("task_instance").xcom_pull("get_common_date")
 
-    date = context.get("task_instance").xcom_pull(key=f"cat_fact_{date_context}")
+    cat_fact = context.get("task_instance").xcom_pull(key=f"cat_fact_{date_context}")
 
-    logging.info(f"️⬇️ Pulled cat fact: {date}")
+    logging.info(f"️⬇️ Pulled cat fact: {cat_fact}")
 
 
 with DAG(
