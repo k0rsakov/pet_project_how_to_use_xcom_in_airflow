@@ -27,6 +27,7 @@ args = {
     "retry_delay": pendulum.duration(hours=1),
 }
 
+
 def get_common_date(**context) -> pendulum.DateTime:
     """
     Возвращает дату из контекста DAG.
@@ -34,7 +35,7 @@ def get_common_date(**context) -> pendulum.DateTime:
     @param context: Контекст DAG.
     @return: data_interval_start:pendulum.DateTime.
     """
-    return context.get("data_interval_start").format('YYYYMMDDHHmmss')
+    return context.get("data_interval_start").format("YYYYMMDDHHmmss")
 
 
 def simple_push_xcom(**context) -> None:
@@ -45,13 +46,11 @@ def simple_push_xcom(**context) -> None:
     @return: data_interval_start:pendulum.DateTime.
     """
 
-    date_context = context.get('task_instance').xcom_pull('get_common_date')
+    date_context = context.get("task_instance").xcom_pull("get_common_date")
 
     response = requests.get(url="https://catfact.ninja/fact", timeout=10)
 
-    context.get("task_instance").xcom_push(
-        key=f"cat_fact_{date_context}", value=response.json()
-    )
+    context.get("task_instance").xcom_push(key=f"cat_fact_{date_context}", value=response.json())
     logging.info(f"⬆️ Pushed cat fact success.")
 
 
@@ -65,9 +64,7 @@ def simple_pull_xcom(**context) -> None:
 
     date_context = context.get("task_instance").xcom_pull("get_common_date")
 
-    date = context.get("task_instance").xcom_pull(
-        task_ids="simple_push_xcom", key=f"cat_fact_{date_context}"
-    )
+    date = context.get("task_instance").xcom_pull(task_ids="simple_push_xcom", key=f"cat_fact_{date_context}")
 
     logging.info(f"️⬇️ Pulled cat fact: {date}")
 
@@ -107,4 +104,4 @@ with DAG(
         task_id="end",
     )
 
-    start >> simple_push_xcom >> simple_pull_xcom >> end
+    start >> get_common_date >> simple_push_xcom >> simple_pull_xcom >> end
