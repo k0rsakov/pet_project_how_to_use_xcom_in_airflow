@@ -1,4 +1,4 @@
-
+import logging
 
 import pendulum
 
@@ -28,7 +28,7 @@ args = {
 }
 
 
-def simple_push_xcom(**context) -> pendulum.DateTime:
+def simple_push_xcom(**context) -> None:
     """
     Возвращает дату из контекста DAG.
 
@@ -36,7 +36,21 @@ def simple_push_xcom(**context) -> pendulum.DateTime:
     @return: data_interval_start:pendulum.DateTime.
     """
 
-    return context.get('data_interval_start')
+    context.get('task_instance').xcom_push(
+        key='dis_simple_communications_between_tasks',
+        value=context.get('data_interval_start')
+    )
+
+
+def simple_pull_xcom(**context) -> None:
+    """"""
+
+    date = context.get('task_instance').xcom_pull(
+        task_ids="simple_push_xcom",
+        key="dis_simple_communications_between_tasks"
+    )
+
+    logging.info(f"Pulled XCom date: {date}")
 
 
 with DAG(
@@ -60,8 +74,13 @@ with DAG(
         python_callable=simple_push_xcom,
     )
 
+    simple_pull_xcom = PythonOperator(
+        task_id="simple_pull_xcom",
+        python_callable=simple_pull_xcom,
+    )
+
     end = EmptyOperator(
         task_id="end",
     )
 
-    start >> simple_push_xcom >> end
+    start >> simple_push_xcom >> simple_pull_xcom >> end
